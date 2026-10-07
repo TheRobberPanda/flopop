@@ -1,18 +1,24 @@
 {
   "expo": {
-    "name": "flopop",
+    "name": "Flopop",
     "slug": "flopop",
     "version": "1.0.0",
+    "description": "A private, offline period and cycle tracker.",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "flopop",
     "userInterfaceStyle": "automatic",
+    "backgroundColor": "#FFF7F9",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/images/icon.png",
+      "bundleIdentifier": "com.flopop.app",
+      "supportsTablet": true
     },
     "android": {
+      "package": "com.flopop.app",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#FF5C8A",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -28,15 +34,25 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#FF5C8A",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 160
         }
-      ]
+      ],
+      "expo-sqlite",
+      "expo-secure-store",
+      "expo-sharing",
+      [
+        "expo-notifications",
+        {
+          "color": "#FF5C8A"
+        }
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": false
     }
   }
 }

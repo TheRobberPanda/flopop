@@ -1,56 +1,63 @@
-# Welcome to your Expo app 👋
+# Flopop
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A private, fully offline period and cycle tracker for Android. Everything lives on the phone — there is no account, no cloud and no network access at runtime.
 
-## Get started
+## What it does
 
-1. Install dependencies
+- **Cycle predictions** — periods, ovulation, fertile window and PMS, learned from your logged cycles (with confidence that widens when cycles are irregular).
+- **Calendar** — colour-coded month view (period, predicted, fertile, ovulation, PMS) with tap-to-log.
+- **Daily log** — flow, ~40 symptoms, moods, discharge, sex, cravings, activities, water, sleep, weight, basal temperature, notes and contraceptive taken.
+- **Insights** — cycle-length history chart, symptom and mood patterns, PMS correlations, hydration and sleep checks.
+- **Predictions** — the next six cycles with confidence bands.
+- **Pregnancy mode** — due date, week-by-week updates, kick counter and contraction timer.
+- **Contraception** — method schedules, daily adherence tracking and reminders.
+- **Reminders** — local notifications for period, daily logging, contraception and custom reminders.
+- **Health report** — an in-app summary you can share as text.
+- **Backup & restore** — encrypted (AES-256) or plain JSON export/import you keep yourself.
+- **Privacy** — 4-digit PIN and fingerprint lock, discreet mode, and a full data wipe.
+- **Health library** — short offline articles on cycles, PMS, fertility and more.
 
-   ```bash
-   npm install
-   ```
+Not included, because they need servers: Flo-style community/secret chats, cloud sync and accounts.
 
-2. Start the app
+> Flopop is a personal tracker, not a medical device. Predictions are estimates and must not be used as contraception or for diagnosis.
 
-   ```bash
-   npx expo start
-   ```
+## Tech
 
-In the output, you'll find options to open the app in a
+Expo SDK 57 · React Native 0.86 · TypeScript · expo-router · expo-sqlite (SQLite, WAL) · Zustand · date-fns · react-native-svg · @noble/ciphers. All data is stored locally in `flopop.db`.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Development
 
 ```bash
-npm run reset-project
+npm install
+npx expo start            # dev server
+npx expo run:android      # build & install on a device/emulator
+npm run typecheck         # tsc --noEmit
+npm run lint              # expo lint
+npm test                  # jest (cycle + pregnancy engine tests)
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Building a standalone APK (no servers)
 
-### Other setup steps
+```bash
+npx expo prebuild -p android
+cd android && ./gradlew assembleRelease
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+The signed APK is written to `android/app/build/outputs/apk/release/app-release.apk`. Sideload it onto the phone (enable "install unknown apps"), or use the debug build with `./gradlew assembleDebug`.
 
-## Learn more
+The release build bundles the JavaScript, so the installed app runs entirely offline. Use only on-device SQLite, local notifications and the device keychain — no network calls.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Project layout
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```
+src/
+  app/         expo-router screens (onboarding, (tabs), log, pregnancy, …)
+  components/  UI kit and domain widgets (cycle ring, calendar, lock screen)
+  content/     offline catalogs: symptoms, moods, articles
+  db/          SQLite client, migrations and repositories
+  domain/      cycle prediction engine, insights, pregnancy maths (pure + tested)
+  hooks/       data hooks that read the local database
+  lib/         crypto, backups, notifications, PIN lock, date helpers
+  store/       Zustand app state
+  theme/       colours, spacing, typography
+```
